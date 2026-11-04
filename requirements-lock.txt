@@ -1,0 +1,15 @@
+# Exact packages used for first baseline, Python 3.12.14 / Windows x64.
+--extra-index-url https://download.pytorch.org/whl/cu128
+filelock==4.2.4
+fsspec==2026.9.0
+Jinja2==3.1.6
+MarkupSafe==3.0.3
+mpmath==1.3.0
+networkx==3.7
+numpy==2.5.4
+pillow==13.0.0
+setuptools==78.1.0
+sympy==1.14.0
+torch==2.10.0+cu128
+torchvision==0.25.0+cu128
+typing_extensions==4.16.0

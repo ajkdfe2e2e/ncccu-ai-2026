@@ -1,0 +1,26 @@
+# Confidential competition data: never publish
+/cxr_first/
+/cxr_first.zip
+/data/
+*.csv
+*.zip
+*.7z
+*.tar
+*.gz
+# Local artifacts and dependencies
+/.venv/
+/outputs/
+/weights/
+/.cache/
+/tmp*
+/pip-*/
+/tests/tmp*/
+*.pt
+*.pth
+*.onnx
+*.engine
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+.env.*
