@@ -14,7 +14,7 @@
 
 CheXficient 固定实验于北京时间 **15:09:06** 正常结束。独立特征完整患者 OOF 为 **0.8286274797**，联合 CXR-LT 特征为 **0.8315443007**，后者相对当前提高 **0.0045058703**，四组均提高；按预设 OOF 规则选中联合特征。其唯一 official valid AUC 为 **0.8394749558**，相对当前提高 **0.0059244293**，但患者 bootstrap 增益描述性 95% 区间 **[-0.0011930675, 0.0133285088]** 跨零，未满足固定的双基线 valid 替换条件。当前采用及用户反馈线上最好仍为 **78.98**；本轮没有提取 test 或导出新 CSV。独立 OOF、终态 valid 重放及两组各 1,000 次患者 bootstrap 复核均通过，预测最大误差 0；详见 [实验结果](docs/CHEXFICIENT_STUDY_PROBE_RESULTS_20261108.md)和 [固定方案](docs/CHEXFICIENT_STUDY_PROBE_PLAN_20261108.md)。
 
-BioViL-T 的公开图像权重和作者源码已固定，22 项资产哈希、4 项合成测试与真实权重 CPU/GPU 合成检查通过。GPU batch2/float16 AMP 输出有限 384D 特征，重复误差 0，峰值 allocated 164,187,136 字节；在 CheXficient 进程退出后单独执行。单图路径仅使用空间特征及投影，不执行时间 Transformer；预处理按作者默认短边 512、中心裁剪 448，输出移除常量半部后的 384 维向量。目前只有工程证据，尚无真实数据实验、AUC 或新 CSV，见 [接入记录](docs/BIOVIL_T_PREPARATION_20261108.md)。
+BioViL-T 固定实验已于北京时间 **15:56:47** 从冻结源码启动，worker PID **14512**；**15:58:52** 为 `running / extract_biovil_train`，已保存 **102/30,344** 张训练图像特征、`error=null`，尚无本轮 AUC 或新 CSV。只比较 CXR-LT+BioViL-T **1,438D** 与 CXR-LT+CheXficient+BioViL-T **1,950D** 两个固定候选，复用已登记的训练特征，并以患者四组完整 OOF 选一个 official valid 候选。计划 SHA-256 `ee6efa98450f5e26e47672d2c5e59d457903faa474da478c14033f46ac3cd981`。完整 CPU 回归 396 项及后补的注册成功路径测试通过；冻结快照加载和独立注册 v2 核验通过。单图预处理为短边512、中心裁剪448，384D 特征不含时间 Transformer。首次独立核验曾因路径匹配漏项意外流式哈希验证矩阵，未做矩阵预测或评分；原记录保留，v2 明确跳过该延迟输入。见 [固定方案](docs/BIOVIL_T_STUDY_PROBE_PLAN_20261108.md) 与 [接入及启动记录](docs/BIOVIL_T_PREPARATION_20261108.md)。
 
 可复核的聚合结果、公开来源和模型/预测 SHA-256 见 [当前配方](docs/best_study_probe_recipe_20261108.json)、[监督特征方案](docs/SUPERVISED_STUDY_PROBE_PLAN_20261108.md)及 [末阶段微调结果](docs/CXRLT_STAGE_FINETUNE_RESULTS_20261108.md)。本地验证集参与过多轮历史选优，公开预训练数据与匿名比赛数据的重叠情况未知；本地验证分数不代表线上分数或无偏泛化估计。
 
