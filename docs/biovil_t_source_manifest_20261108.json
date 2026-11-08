@@ -1,0 +1,122 @@
+{
+  "model": "microsoft/BiomedVLP-BioViL-T",
+  "revision": "301f526e823b805d3fe712d0cf06a66f042789c5",
+  "code_repository": "microsoft/hi-ml",
+  "code_revision": "b67c1d27c6b17d8e8ff01f8c507f3cabdb307388",
+  "metadata_url": "https://huggingface.co/api/models/microsoft/BiomedVLP-BioViL-T/revision/301f526e823b805d3fe712d0cf06a66f042789c5?blobs=true",
+  "license": "mit",
+  "gated": false,
+  "files": {
+    "biovil_t_image_model_proj_size_128.pt": {
+      "url": "https://huggingface.co/microsoft/BiomedVLP-BioViL-T/resolve/301f526e823b805d3fe712d0cf06a66f042789c5/biovil_t_image_model_proj_size_128.pt",
+      "sha256": "b2399d73dc2a68b9f3a1950e864ae0ecd24093fb07aa459d7e65807ebdc0fb77",
+      "bytes": 109745561
+    },
+    "README.md": {
+      "url": "https://huggingface.co/microsoft/BiomedVLP-BioViL-T/raw/301f526e823b805d3fe712d0cf06a66f042789c5/README.md",
+      "sha256": "24fd9534b62368919f5cdc144e473d1611fad4347994ac634a9e8dc1acfc4965",
+      "bytes": 12722
+    },
+    "source/LICENSE": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/LICENSE",
+      "sha256": "c2cfccb812fe482101a8f04597dfc5a9991a6b2748266c47ac91b6a5aae15383",
+      "bytes": 1141
+    },
+    "source/hi-ml-multimodal/setup.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/setup.py",
+      "sha256": "88d73ac56df339249b3014c209330dbea11a1f6dcde5ec78015047093c7e3279",
+      "bytes": 1510
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/__init__.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/__init__.py",
+      "sha256": "d75a55fe3c1eeda0c74a8a69641185d0bfd78810683d085ad5e768aa7c60c7f2",
+      "bytes": 369
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/common/__init__.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/common/__init__.py",
+      "sha256": "738f0ce899cc2bc442cf60f59cc50c9899829eac6f1f21556a05ad2309c8cf3a",
+      "bytes": 472
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/common/device.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/common/device.py",
+      "sha256": "ebefd23c51b8929e7a04869ea82e960e71ee2b9e947f6236ced4da69413bc248",
+      "bytes": 605
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/common/visualization.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/common/visualization.py",
+      "sha256": "86533d7b92bbf7e36ef3ea1faf4601ef9139728f4937e38e9c16776c2cb98930",
+      "bytes": 5245
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/image/__init__.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/image/__init__.py",
+      "sha256": "9a5b4a4d2a1256d76534b9dda181d5885c2453712d843b2a256a89075771e910",
+      "bytes": 1056
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/image/data/__init__.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/image/data/__init__.py",
+      "sha256": "6134c3f67e930a3088f6f902f7c9cda7e2152ee218457a7b7a73949ee6abafca",
+      "bytes": 346
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/image/data/io.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/image/data/io.py",
+      "sha256": "0e7362e87a266cd1cd4ee2027c4ef4204ceabffef90886643cbef15b20a012a7",
+      "bytes": 2835
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/image/data/transforms.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/image/data/transforms.py",
+      "sha256": "0be6fd628bd9ac0bc64656314dc358fd9def7599fee1aa0a5a9bf288194bc76d",
+      "bytes": 3332
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/image/inference_engine.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/image/inference_engine.py",
+      "sha256": "e8add193733bb472cbdd6fd64539467695bdd85c91fb1533f953197c1221c23c",
+      "bytes": 3764
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/image/model/__init__.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/image/model/__init__.py",
+      "sha256": "4f27cf5f331168b71a9f30cbbfca23277ae9953422c7af95721b6c2370e5a754",
+      "bytes": 526
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/image/model/encoder.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/image/model/encoder.py",
+      "sha256": "c094e56097d6addb6c61fb987ea4c60a0e359ebe6c5e2112eb1860e54034b351",
+      "bytes": 7625
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/image/model/model.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/image/model/model.py",
+      "sha256": "44b91fce7783057532eace456e8592eaea8c75cd05ae92b3e7333f16e6c357fc",
+      "bytes": 5725
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/image/model/modules.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/image/model/modules.py",
+      "sha256": "c6dc024995633f83af525436af59babb7330838e4acb668919e2965c1368ff99",
+      "bytes": 3731
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/image/model/pretrained.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/image/model/pretrained.py",
+      "sha256": "355e61d5963683c68b0669eac1e303429b3e7ec95909d78b43f6cc1021a66f94",
+      "bytes": 4695
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/image/model/resnet.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/image/model/resnet.py",
+      "sha256": "d7e7d9418ddc5e20614f3eb3ec3c08a98c836bb9bcf26aa9a41798233986c151",
+      "bytes": 3346
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/image/model/transformer.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/image/model/transformer.py",
+      "sha256": "9b404c8399a290ed248214da5b9838564f70948870e0a18f5110e57db66cf5cb",
+      "bytes": 11784
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/image/model/types.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/image/model/types.py",
+      "sha256": "7515c35376491a8d05883b34b51f740c4d007e878fb8d84d5b6952ae178f7d71",
+      "bytes": 1329
+    },
+    "source/hi-ml-multimodal/src/health_multimodal/image/utils.py": {
+      "url": "https://raw.githubusercontent.com/microsoft/hi-ml/b67c1d27c6b17d8e8ff01f8c507f3cabdb307388/hi-ml-multimodal/src/health_multimodal/image/utils.py",
+      "sha256": "ed8b4b7e3a27f15f1e272e760103894407e519a0a48823b9fc5fab6972551a83",
+      "bytes": 1778
+    }
+  },
+  "scope": "public assets only; no real-data inference or metrics"
+}
