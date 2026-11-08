@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "repository": "StanfordAIMI/CheXficient",
+  "revision": "34bb5ea905c4cb504d2b73c9a6687a5d5082f52a",
+  "author_repository": "cwangrun/CheXficient",
+  "author_commit": "53a5dc61c4fd0b7d8217dd32169fb0aa2dd9156a",
+  "license": "MIT per HF model card and author LICENSE; vendored DINOv2 source headers specify Apache-2.0; underlying dataset terms also apply",
+  "license_reference": "DINOv2-LICENSE.txt is the canonical Apache 2.0 text; copied source copyright notices are preserved",
+  "intended_scope": "Public medical-model research; not compliant with competition non-medical pretraining restriction",
+  "pretraining_overlap_with_anonymized_local_data": "unknown",
+  "feature_contract": {
+    "image_backbone": "vit_base",
+    "patch_size": 14,
+    "input_size": 378,
+    "hidden_width": 768,
+    "num_register_tokens": 0,
+    "projection_width": 512,
+    "projection_normalization": "L2 per image",
+    "feature_width": 512,
+    "output_is_local_ten_class_logits": false
+  },
+  "metadata_discrepancy": "README frontmatter names dinov2-small; author config/code and checkpoint tensor shapes establish ViT-Base without register tokens",
+  "load_scope": "Only image_encoder.model.* and image_projection.projection.*; no text branch or external initialization weights",
+  "preprocessing": {
+    "crop_size": {
+      "height": 378,
+      "width": 378
+    },
+    "do_center_crop": true,
+    "do_convert_rgb": true,
+    "do_normalize": true,
+    "do_rescale": true,
+    "do_resize": true,
+    "image_mean": [
+      0.48145466,
+      0.4578275,
+      0.40821073
+    ],
+    "image_processor_type": "BitImageProcessor",
+    "image_std": [
+      0.26862954,
+      0.26130258,
+      0.27577711
+    ],
+    "resample": 3,
+    "rescale_factor": 0.00392156862745098,
+    "size": {
+      "shortest_edge": 378
+    }
+  },
+  "files": {
+    "config.json": {
+      "sha256": "1a4c1aebf105bfe672fbf23bc759c49bca3cbae64ca7dee886fa3d3faeef2229",
+      "bytes": 459,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/config.json"
+    },
+    "configuration_chexficient.py": {
+      "sha256": "44b24ef7a57498dfec0a3af6264840c87ece285517638aeeb313fecea89e1ce1",
+      "bytes": 644,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/configuration_chexficient.py"
+    },
+    "dinov2/__init__.py": {
+      "sha256": "0d2b87b7e71c7f7279ccc4b4f8b541d26071425284a0ea01a5a435fac4511cfe",
+      "bytes": 218,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/dinov2/__init__.py"
+    },
+    "dinov2/layers/__init__.py": {
+      "sha256": "5b5f637b2371089e34e0bec9a49518e2250f915aa9e10cae83a32f8e671ad24f",
+      "bytes": 411,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/dinov2/layers/__init__.py"
+    },
+    "dinov2/layers/_utils.py": {
+      "sha256": "db8ff05a1efd5d2849e2fffd68be3f54b683b9b474a8d1dbaa8f67153a826b09",
+      "bytes": 541,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/dinov2/layers/_utils.py"
+    },
+    "dinov2/layers/attention.py": {
+      "sha256": "c25b0f59d07c1fad5dc0f1e5bee5a2e9c39b46e166a10061984f0ae135f2b601",
+      "bytes": 2355,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/dinov2/layers/attention.py"
+    },
+    "dinov2/layers/block.py": {
+      "sha256": "cb2a2482b842c9b47012bb078aaa15c605da29f908d65cbdec950df3c034306e",
+      "bytes": 9323,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/dinov2/layers/block.py"
+    },
+    "dinov2/layers/dino_head.py": {
+      "sha256": "9fdb1fa61c0609dc0876f711f9d0d828c33bf9fd972aab3d9c968d44e16b98d1",
+      "bytes": 2007,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/dinov2/layers/dino_head.py"
+    },
+    "dinov2/layers/drop_path.py": {
+      "sha256": "b9f8236e86054b9d9a71275efcad2a9ecaa1f86b529d4b8d6109ddb5e806f67a",
+      "bytes": 1157,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/dinov2/layers/drop_path.py"
+    },
+    "dinov2/layers/layer_scale.py": {
+      "sha256": "abb7bbfae152a9de2e6d0961ab5e75c79428e849281bfe50dd07b66b54b485d1",
+      "bytes": 820,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/dinov2/layers/layer_scale.py"
+    },
+    "dinov2/layers/mlp.py": {
+      "sha256": "255825c73b60a916dd00eb1e38aacbcdbf316e40d6a005efb46e245b7edb43aa",
+      "bytes": 1269,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/dinov2/layers/mlp.py"
+    },
+    "dinov2/layers/patch_embed.py": {
+      "sha256": "40da6add3d811198ea3e17cb99cdd4e5cda59e369efbbe3d18d89308618cf142",
+      "bytes": 2829,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/dinov2/layers/patch_embed.py"
+    },
+    "dinov2/layers/swiglu_ffn.py": {
+      "sha256": "9ce3a4348d13c4ed74c301d7658ed5e2bf8b8dc889cf589c24d8e5c343a652c9",
+      "bytes": 1898,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/dinov2/layers/swiglu_ffn.py"
+    },
+    "dinov2/models/__init__.py": {
+      "sha256": "87b360c71997314f41be1c497cc42326fc32617d3a2840f2f19d3795ca8b85ee",
+      "bytes": 1486,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/dinov2/models/__init__.py"
+    },
+    "dinov2/models/vision_transformer.py": {
+      "sha256": "8dc1e2ededd4893a335aa2f524c15554bcdb14d824e310ca3df825e16081a268",
+      "bytes": 14837,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/dinov2/models/vision_transformer.py"
+    },
+    "DINOv2-LICENSE.txt": {
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358,
+      "source_url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+    },
+    "model.safetensors": {
+      "sha256": "f691262c3f77c3c850bebff420180602cf4ca5d5214449e377366f3205548336",
+      "bytes": 780793036,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/model.safetensors"
+    },
+    "modeling_chexficient.py": {
+      "sha256": "4cd0b0eba35b41e86a9d6b0dc575696c6d6e4748894846402e97c6319fb0289d",
+      "bytes": 6399,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/modeling_chexficient.py"
+    },
+    "preprocessor_config.json": {
+      "sha256": "f57a2119226fd201a9f824639d0aacff5da3e7fb9d868d5216c38a36fee2141b",
+      "bytes": 465,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/preprocessor_config.json"
+    },
+    "projection.py": {
+      "sha256": "4915d0211f42c9619e0a823b90e2a374fa8024cafc598b6255fc4d0bed89f1eb",
+      "bytes": 1531,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/projection.py"
+    },
+    "README.md": {
+      "sha256": "5d8fc33ceaf8ba8a0e6adb53dfa33e9253bc68735912ededdcbb038072ee2152",
+      "bytes": 3477,
+      "source_url": "https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/README.md"
+    },
+    "upstream-LICENSE": {
+      "sha256": "089664bed13c0f09205fe188abad9c10af65d357018faa04ac948e6bc1bb61be",
+      "bytes": 1076,
+      "source_url": "https://raw.githubusercontent.com/cwangrun/CheXficient/53a5dc61c4fd0b7d8217dd32169fb0aa2dd9156a/LICENSE"
+    },
+    "upstream-models_clip.py": {
+      "sha256": "db6b61c6f8e199cb1ad919ec8d525f1ebcebdbaa3f70e34857f83d2224d07a3e",
+      "bytes": 30917,
+      "source_url": "https://raw.githubusercontent.com/cwangrun/CheXficient/53a5dc61c4fd0b7d8217dd32169fb0aa2dd9156a/models_clip.py"
+    },
+    "upstream-README.md": {
+      "sha256": "32ba5e519febf2ea1e1b887c33fdbd83d758e65dd40f7379ef7668311740f8c9",
+      "bytes": 9756,
+      "source_url": "https://raw.githubusercontent.com/cwangrun/CheXficient/53a5dc61c4fd0b7d8217dd32169fb0aa2dd9156a/README.md"
+    }
+  },
+  "scope": "Public provenance only; no weights, patient data, image identifiers or per-example predictions",
+  "engineering_status": "Six synthetic tests and actual CPU strict image-only load/replay passed; synthetic RGB/grayscale preprocessing exactly matches pinned v4.51.3 transform function bodies; no real-data experiment registered",
+  "engineering_evidence": {
+    "adapter_sha256": "f45aca9b42d21953aa459e43e5b665df1f22f0228e6457f5583bfd1d1ee3e6c3",
+    "cpu_report": "outputs/chexficient-preparation-20261108/cpu_engineering_check-v2.json",
+    "strict_image_tensors": 177,
+    "image_parameters": 86482688,
+    "preprocessing_max_abs_error": 0.0,
+    "projection_replay_max_abs_error": 0.0,
+    "reference_sources": {
+      "version": "transformers v4.51.3",
+      "image_transforms.py": "a9ee5bda4d185f20bd1ddf2e4b128190bd255f9a4b40216d2fed30b7174411fc",
+      "image_utils.py": "a42bbb34154f3a35e644638758b8658c66f6f6fa1fe030b42aa26b7c34c36334",
+      "models/bit/image_processing_bit.py": "413f7f1bfa63ed6c28bc92bd2b370a620b28b7fd4c28e7574a64cbab299db69b"
+    }
+  },
+  "performance_evidence": null
+}

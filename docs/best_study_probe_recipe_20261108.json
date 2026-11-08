@@ -112,12 +112,14 @@
     "csv_sha256": "7590ef61172423348bcf9a0c9afdb578b5416396d41a1c9357b03b0df232ec68",
     "head_reload_max_probability_error": 0.0,
     "online_score": 78.98,
-    "online_score_source": "User reported on 2026-11-08; attached CSV SHA-256 matches local delivery; platform metric definition not confirmed"
+    "online_score_source": "User reported on 2026-11-08; attached CSV SHA-256 matches local delivery; official main metric is Macro-AUC, but the user's scoring page was not independently read",
+    "displayed_macro_auc_if_main_score": 0.7898,
+    "official_scoring_reference": "docs/OFFICIAL_SCORING_20261108.md"
   },
   "online_scores_user_reported": {
     "legacy_fusion": 78.53,
     "rad_dino_A_ema": 77.34,
-    "metric_definition": "Not confirmed",
+    "metric_definition": "Official main score is Macro-AUC rounded to four decimals and multiplied by 100; reported values are user feedback, scoring page/split not independently verified",
     "cxrlt_study_probe": 78.98,
     "current_best": "cxrlt_study_probe",
     "cxrlt_gain_over_legacy_points": 0.45
@@ -126,6 +128,7 @@
     "Finite-candidate OOF selection estimate; not unbiased generalization evidence.",
     "Official validation has been reused during historical selection; bootstrap intervals are descriptive.",
     "Public pretraining overlap with anonymized local data is unknown.",
-    "Higher local validation AUC does not establish a higher online score; F1 at 0.5 decreased."
+    "Higher local validation AUC does not establish a higher online score; F1 at 0.5 decreased.",
+    "Medical-pretrained research does not satisfy the official restriction to general non-medical pretraining; a returned CSV score does not establish materials compliance."
   ]
 }
