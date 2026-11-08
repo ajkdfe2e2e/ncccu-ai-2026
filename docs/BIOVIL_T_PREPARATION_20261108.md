@@ -1,6 +1,6 @@
 # BioViL-T 后续方向的来源核验（2026-11-08）
 
-本轮只准备公开资产与 CPU 工程接入，没有注册 BioViL-T 真实数据实验，没有读取本地真实图像、拟合分类头、计算候选 AUC 或生成预测 CSV。正在运行的 CheXficient 实验继续使用其原固定方案，不增加候选或改变门槛。当前保留的线上反馈最好仍为 CXR-LT 的 **78.98**。
+本轮只准备公开资产与合成输入工程接入，没有注册 BioViL-T 真实数据实验，没有读取本地真实图像、拟合分类头、计算候选 AUC 或生成预测 CSV。CPU 检查在 CheXficient 提取训练特征时完成；GPU 检查在该实验正常结束、进程退出后才执行。CheXficient 的候选和门槛保持原固定方案，当前保留的线上反馈最好仍为 CXR-LT 的 **78.98**。
 
 公开图像权重固定为 `microsoft/BiomedVLP-BioViL-T@301f526e823b805d3fe712d0cf06a66f042789c5` 的 `biovil_t_image_model_proj_size_128.pt`，**109,745,561 字节**，SHA-256 `b2399d73dc2a68b9f3a1950e864ae0ecd24093fb07aa459d7e65807ebdc0fb77`。已独立对照该 revision 的 Hugging Face API/LFS 元数据并核验实际下载字节；仓库无需 gated 访问。图像权重、模型卡与官方代码共 22 项来源和哈希见 [公开资产清单](biovil_t_source_manifest_20261108.json)。未下载文本模型。
 
@@ -14,4 +14,6 @@
 
 4 项独立于外部资产的合成回归测试与 Python 编译通过。实际权重的 4 线程 CPU 工程检查使用两张合成 RGB/灰度图：输入形状 `2×3×448×448`，输出 `2×384`，官方预处理对照最大误差 **0**，重复输出最大误差 **0**，参数全部冻结、模型保持 eval、投影范数为 1；被移除的 256 维与池化后的 `missing_previous_emb` 最大差为 `1.1176e-8`。本地证据在 `outputs/biovil-t-preparation-20261108/cpu_engineering_check.json`，未使用 GPU、真实图像或标签，未拟合分类头或计算 AUC。
 
-正式患者 OOF 方案、GPU 设置和真实数据提取要在当前 CheXficient 实验结束后另行冻结；当前尚无 BioViL-T 性能证据，也没有新预测 CSV。
+北京时间 **15:14:33** 的合成 GPU 检查随后通过：RTX 4060 Laptop、batch2、CUDA float16 AMP、4 CPU 线程，输入为不同的合成 RGB/灰度图，输出有限且冻结的 384D 特征；投影范数约为 1，两次输出最大误差 **0**。峰值 allocated **164,187,136 字节**、reserved **182,452,224 字节**，单次工程过程约 0.77 秒。证据 `outputs/biovil-t-preparation-20261108/gpu_engineering_check.json` 绑定适配器 SHA-256 `e6ad1ce0325d507c363db9de60f0bc6f42d12dd9fd1d0cbe5e42f59c727befb8` 与固定权重。检查前后均没有其它项目 CUDA worker；桌面应用的显存未被关闭或清理。该检查未读取真实数据、未训练或计算 AUC，合成 batch 的内存和速度不作为全量真实提取的计时保证。
+
+正式患者 OOF 方案和真实数据提取要另行冻结；当前尚无 BioViL-T 性能证据，也没有新预测 CSV。
