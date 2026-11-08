@@ -1,0 +1,9 @@
+# Optional public medical-model research track, verified on 2026-11-05.
+-r requirements.txt
+transformers==5.10.1
+timm==1.0.31
+safetensors==0.8.0
+huggingface-hub==1.33.0
+opencv-python-headless==5.0.0.93
+torchxrayvision==1.5.7
+scikit-image==0.26.0

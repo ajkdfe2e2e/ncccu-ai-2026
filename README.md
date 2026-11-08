@@ -2,11 +2,29 @@
 
 面向 NCCCU 2026 人工智能挑战赛的研究代码，**不用于临床诊断**。原始比赛数据、模型权重、预测结果均不随 Git 发布。
 
+## 当前研究进度（2026-11-08）
+
+当前已完成实验中的最高本地官方 valid 十类 Macro-AUC 为 **0.8335505264**，来自冻结的公开 CXR-LT ConvNeXtV2 特征与本地训练集学习的检查级十类线性头；训练集患者分组完整 OOF Macro-AUC 为 **0.8270384304**。两个分数对应不同评估人群，不直接互比。公开模型固定为 `hieuphamha/cxrlt2026-task1-convnextv2@24bf8bdfd8d0262899167b030be16ab89f78ae20`。
+
+最高 valid AUC 方案的本地测试预测为 `outputs/submission_test_1414_best_auc_083355_20261108.csv`，覆盖 1,414 次检查、14,140 行，分类头重载重放最大概率误差为 0。该文件尚无线上成绩；用户反馈的线上最高仍为旧融合 **78.53**，Rad-DINO A+EMA 为 **77.34**。预测、权重和逐例核验文件仅保存在本地。
+
+后续嵌套分类头、语义瓶颈及末阶段微调均未替换当前模型。末阶段微调完整 OOF 为 **0.8169781872**，未通过预先固定的筛选门槛。EVA-X 实验仍在提取真实训练图像特征，尚无候选 AUC；上传快照的时间与进度见 [进度记录](docs/PROGRESS_SNAPSHOT_20261108.md)。持续优化目标为 active，当前优先保存和上传已有工作，已启动的特征提取继续运行。
+
+可复核的聚合结果、公开来源和模型/预测 SHA-256 见 [当前配方](docs/best_study_probe_recipe_20261108.json)、[监督特征方案](docs/SUPERVISED_STUDY_PROBE_PLAN_20261108.md)及 [末阶段微调结果](docs/CXRLT_STAGE_FINETUNE_RESULTS_20261108.md)。本地验证集参与过多轮历史选优，公开预训练数据与匿名比赛数据的重叠情况未知；当前验证最高分不代表线上最高分或无偏泛化估计。
+
+## 历史研究结果（2026-11-05）
+
+在原最高分方案上继续增加公开权重预测与 Rad-DINO 翻转推理，完整验证集 **859 次检查、十类 Macro-AUC 从 0.819362 提高到 0.820325**。单个最佳 Rad-DINO 检查点使用原图/翻转图概率均值后，十类 AUC 从 0.803207 提高到 0.807447。所有分数来自本地完整 valid；五类公开模型的分数单独列示。
+
+本次是用户授权的外部医学预训练研究路线。原自然图像预训练基线仍独立保留，研究结果不代表满足原比赛材料/大小/耗时要求。详细结果、固定配方、重现命令与局限见 [医学模型验证记录](docs/MEDICAL_RESULTS_20261105.md)，公开来源、固定版本和 SHA-256 见 [模型清单](docs/public_model_manifest.json)。
+
+融合系数使用了 valid 标签；增量的患者 bootstrap 95% 区间跨零，患者分组诊断没有确认稳定收益。0.820325 表示本轮已完成实验中的最高验证分数，不是独立泛化保证。原 0.819362 方案及其文件保持不变。
+
 ## 当前实现
 
 - 严格解析官方 CSV：`Predict_class` 是分号分隔的 **1–10** 类 ID。
 - 官方 train/valid 分离；不合并验证集，不用测试集做调参、训练或归一化统计估计。
-- ResNet18 + 10 个 sigmoid 输出；可用 torchvision ImageNet-1K 权重，禁止医学预训练权重。
+- 原基线：ResNet18 或 ConvNeXt-Tiny + 10 个 sigmoid 输出，仅使用 torchvision ImageNet-1K 权重；医学预训练研究使用独立脚本与输出。
 - 保持长宽比缩放 + 黑边补齐；训练随机仿射，推理固定变换。
 - BCEWithLogitsLoss，按训练集检查级频次计算正类权重，上限 10；按每次检查图数的倒数对图像损失加权。
 - 同次检查多图概率算术平均；不跨患者或跨检查自适应。
@@ -24,7 +42,7 @@ python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-本机 GPU 为 RTX 3050 4GB，默认 batch 8、224 像素、训练混合精度。RTX 3050 的本地耗时不能代替官方 T4 测试。发生显存不足时先减小 batch（至少 2）。
+默认 ResNet18 使用 batch 8、224 像素、训练混合精度。2026-11-04 的新实验机器为 RTX 4060 Laptop 8GB；实际可用显存取决于其他程序占用。本地耗时不能代替官方 T4 测试。ConvNeXt 支持物理 batch=1，并可用梯度累积保持有效 batch；ResNet 的训练 batch 至少为 2。
 
 ## 数据布局
 
@@ -55,6 +73,22 @@ cxr_first/
 权重来自 PyTorch 官方公开 URL；脚本验证官方文件名 hash 前缀，保存完整 SHA-256、许可证和来源记录到 `weights/`。软件许可证不自动代表所有权重/数据授权，提交前仍须核对赛事要求与材料。
 
 每次训练必须用新的或空的输出目录，避免混淆日志和模型。`best.pt` 根据验证集检查级 AUC 选择，`run.json` 记录配置，`history.jsonl` 记录每轮指标、学习率和速度。默认 batch=1 验证，与共享推理器保持一致。不合并验证集。
+
+### ConvNeXt 与显存受限训练
+
+第一阶段的固定预算、对照指标和后续路线见 [AGGRESSIVE_OPTIMIZATION_PLAN.md](AGGRESSIVE_OPTIMIZATION_PLAN.md)。下面使用物理 batch=4、累积4次、有效 batch=16；启动前先完成 CUDA 和小子集检查。
+
+```powershell
+.\.venv\Scripts\python.exe scripts/check_cuda.py
+.\.venv\Scripts\python.exe scripts/fetch_pretrained.py --architecture convnext_tiny
+.\.venv\Scripts\python.exe train.py --architecture convnext_tiny --pretrained weights/convnext_tiny-983f1562.pth --data-root 'G:\cxr_first(1)\cxr_first' --output outputs/convnext384-new --image-size 384 --batch-size 4 --accumulation-steps 4 --epochs 20 --lr 0.0001 --weight-decay 0.01 --scheduler cosine --warmup-epochs 2 --min-lr 0.000001 --ema-decay 0.999 --image-cache .cache/letterbox384 --workers 0 --device cuda
+```
+
+`--gradient-checkpointing` 可重计算 ConvNeXt 特征阶段以减少显存；`--ema-device cpu` 将 EMA 权重存于 CPU，验证时移回模型设备。二者可能增加耗时。EMA 只在成功的优化器更新后更新，验证和 `best.pt` 使用 EMA 权重；`last-training.pt` 同时保存原模型和 EMA。梯度累积按每个窗口实际图像数归一化，最后不足一个窗口也会更新。改变优化过程的新增参数参与恢复配置检查；旧 ResNet 状态缺失这些字段时按原默认值解释。
+
+`--image-cache .cache/letterbox384` 可把 RGB 转换和确定性缩放结果以无损 PNG 缓存在原始数据目录之外。缓存键含源文件路径、大小、修改时间、Pillow 版本和输入尺寸；随机仿射仍在每次训练读取时执行。缓存只影响读取成本，不是模型输入参数，因此恢复时可更换缓存目录。`scripts/profile_training.py` 会分别报告原图读取、缓存命中与 GPU 纯计算速度，并检查采样真实图像的张量逐位相同。
+
+若要在训练结束后自动完成验证预测、患者 bootstrap 对比、推理文件清单和本地计时，可使用 `scripts/run_aggressive_experiment.py --data-root <原始数据目录> --output <全新实验目录> --baseline <已验证的基线valid.csv> --image-cache .cache/letterbox384`。执行器先保存代码快照，再从快照运行固定的20轮方案；状态和独立日志在实验父目录，模型及验证报告在其 `training/` 子目录。后台启动后查看 `experiment.json` 的实际阶段与状态，不能把进程已创建视为实验已完成。
 
 ### 继续微调与 epoch 边界恢复
 
@@ -96,7 +130,16 @@ cxr_first/
 .\.venv\Scripts\python.exe predict.py --split test --checkpoint outputs/resnet18-run1/best.pt --output outputs/submission.csv
 ```
 
-完整测试集应输出 1414×10=14140 行数据，不含表头。程序检查精确 ID 覆盖、无重复、类别 1–10、概率/阈值范围及有限值，并保存报告。原始数据目录拒绝作为输出路径。
+完整测试集应输出 1414×10=14140 行数据，另有一行表头，共14141行。程序检查精确 ID 覆盖、无重复、类别 1–10、概率/阈值范围及有限值，并保存报告。原始数据目录拒绝作为输出路径。`valid.csv` 的859次检查预测仅供本地验证，不能作为平台的测试集提交文件。
+
+2026-11-05 旧医学融合方案可按保存的固定配方导出完整测试集。下面命令对应旧融合，不是 2026-11-08 的当前最高 valid AUC 方案：
+
+```powershell
+.\.venv\Scripts\python.exe scripts/predict_best_ensemble.py --data-root 'G:\cxr_first(1)\cxr_first' --output outputs/best-ensemble-test-20261105 --split test --device cuda
+.\.venv\Scripts\python.exe scripts/validate_submission.py outputs/best-ensemble-test-20261105/submission.csv --metadata 'G:\cxr_first(1)\cxr_first\test.csv'
+```
+
+导出器核验公开权重和本地检查点的SHA-256，分组件运行完整推理，并用测试清单检查输出ID、十类覆盖与CSV概率往返一致性。中断后可复用指纹一致且完整的组件。报告明确记录`split=test`；没有测试标签，不报告测试集AUC。
 
 ## 耗时测试：当前是本地辅助实现
 
@@ -124,4 +167,4 @@ cxr_first/
 - https://ncccu2026.oss-cn-zhangjiakou.aliyuncs.com/ueditor/20261023/aa80bececc2ee40e69cde5f8f2a0eaec.pdf
 - https://ncccu2026.oss-cn-zhangjiakou.aliyuncs.com/ueditor/20261027/b23d6a1f19602da2a9bd4048108175d0.pdf
 
-远程仓库：https://github.com/hu-ihu/Chest-X-ray 。初始化不代表已经推送。
+原上游：https://github.com/hu-ihu/Chest-X-ray 。2026-11-08 上传时该地址返回 404；进度保存至当前账号的私有赛事仓库 https://github.com/ajkdfe2e2e/ncccu-ai-2026 ，使用独立进度分支，原上游配置保留。

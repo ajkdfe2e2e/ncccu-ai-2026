@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "scope": "Aggregate recipe and provenance only; no weights, images, subject/study IDs or per-example predictions",
+  "experiment": "cxrlt-supervised-study-probe-20261108",
+  "public_model": {
+    "repository": "hieuphamha/cxrlt2026-task1-convnextv2",
+    "revision": "24bf8bdfd8d0262899167b030be16ab89f78ae20",
+    "weight_file": "convnextv2_base_mimic-cxr_padchest_csra_dbcas.safetensors",
+    "weight_sha256": "6950f7b97422b807e16a821a954e5d62b6868f8fbfb1e841f6d090c91e4ca17b",
+    "source_file": "model.py",
+    "source_sha256": "b08fb08dc44dd936573aaa590244b502756b5335085e9b78cd84d939d4975ec0",
+    "license": "MIT per upstream model card; underlying dataset terms also apply"
+  },
+  "feature_recipe": {
+    "frozen_backbone": true,
+    "input_size": 512,
+    "preprocess": "OpenCV grayscale, linear resize to 512x512, duplicate three channels, scale /255, ImageNet mean/std",
+    "features": "1024-dimensional GAP after source BN plus 30 source logits",
+    "image_feature_width": 1054,
+    "study_pooling": "mean",
+    "source_class_names_reused_as_local_labels": false,
+    "tta": null
+  },
+  "local_head": {
+    "mode": "mean",
+    "alpha": 1.0,
+    "l2": 0.01,
+    "max_iter": 200,
+    "seed": 20261108,
+    "head_sha256": "6a90b170225f23ca3e602acaff32907b96a5307a1dc86b90280ad26081813d32"
+  },
+  "local_head_loss": "Ten-output unweighted BCE plus L2, CPU float64 LBFGS; normalization fitted on training patients only",
+  "train_cohort": {
+    "images": 30344,
+    "studies": 18513,
+    "patients": 11055
+  },
+  "official_valid_cohort": {
+    "images": 1422,
+    "studies": 859,
+    "patients": 228
+  },
+  "training_selection_evidence": {
+    "mode": "mean",
+    "alpha": 1.0,
+    "macro_auc": 0.8270384304066101,
+    "macro_auc_defined_classes": 10,
+    "overall_gain": 0.008779343708132714,
+    "per_class_auc": [
+      0.7021960960090408,
+      0.8971001217535027,
+      0.818907300088292,
+      0.7371528157813136,
+      0.8891439598930291,
+      0.8203901018092978,
+      0.8193651480666231,
+      0.7709726561720415,
+      0.921372467809428,
+      0.8937836366835319
+    ],
+    "held_groups": [
+      {
+        "fold": 0,
+        "baseline_macro_auc": 0.8157545849731175,
+        "candidate_macro_auc": 0.8234672273056935,
+        "gain": 0.00771264233257607,
+        "defined_classes": 10
+      },
+      {
+        "fold": 1,
+        "baseline_macro_auc": 0.8203810818434402,
+        "candidate_macro_auc": 0.8270622606336108,
+        "gain": 0.0066811787901706055,
+        "defined_classes": 10
+      },
+      {
+        "fold": 2,
+        "baseline_macro_auc": 0.8151488456744485,
+        "candidate_macro_auc": 0.826439536337848,
+        "gain": 0.011290690663399494,
+        "defined_classes": 10
+      },
+      {
+        "fold": "audit",
+        "baseline_macro_auc": 0.8240978918856007,
+        "candidate_macro_auc": 0.8336422909967315,
+        "gain": 0.009544399111130808,
+        "defined_classes": 10
+      }
+    ],
+    "positive_held_groups": 4
+  },
+  "official_valid": {
+    "macro_auc": 0.8335505264258105,
+    "legacy_baseline_macro_auc": 0.8203251712650804,
+    "auc_delta": 0.01322535516073009,
+    "paired_patient_bootstrap_auc_delta_ci95_descriptive": [
+      0.00012639592136582704,
+      0.026401753673629697
+    ],
+    "bootstrap_defined_replicates": 1000,
+    "macro_f1_at_0_5": 0.3763337399668053,
+    "legacy_baseline_macro_f1_at_0_5": 0.43739500546651655
+  },
+  "local_test_delivery": {
+    "filename": "submission_test_1414_best_auc_083355_20261108.csv",
+    "images": 2218,
+    "studies": 1414,
+    "prediction_rows": 14140,
+    "classes_per_study": 10,
+    "gate": 0.5,
+    "csv_sha256": "7590ef61172423348bcf9a0c9afdb578b5416396d41a1c9357b03b0df232ec68",
+    "head_reload_max_probability_error": 0.0,
+    "online_score": null
+  },
+  "online_scores_user_reported": {
+    "legacy_fusion": 78.53,
+    "rad_dino_A_ema": 77.34,
+    "metric_definition": "Not confirmed"
+  },
+  "limitations": [
+    "Finite-candidate OOF selection estimate; not unbiased generalization evidence.",
+    "Official validation has been reused during historical selection; bootstrap intervals are descriptive.",
+    "Public pretraining overlap with anonymized local data is unknown.",
+    "Higher local validation AUC does not establish a higher online score; F1 at 0.5 decreased."
+  ]
+}

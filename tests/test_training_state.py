@@ -8,9 +8,10 @@ from unittest import mock
 import numpy as np
 import torch
 
-from cxr.training_state import (RESUME_KEYS, capture_rng, restore_rng, cpu_snapshot,
+from cxr.training_state import (RESUME_KEYS, OPTIMIZATION_DEFAULTS, capture_rng, restore_rng, cpu_snapshot,
                                 capture_training_state, restore_training_state,
                                 validate_init, validate_resume, safe_load, atomic_save)
+from cxr.optimization import ModelEMA
 
 
 def configuration():
@@ -165,6 +166,47 @@ class TrainingStateTests(unittest.TestCase):
         state = roundtrip(capture_training_state(*parts, config, 1, .6, self.best))
         restore_training_state(state, *parts, config)
         self.assertIsNone(state['scheduler'])
+
+    def test_legacy_state_without_optimization_fields_keeps_original_defaults(self):
+        legacy = copy.deepcopy(self.state)
+        legacy.pop('ema', None)
+        validate_resume(legacy, dict(self.config, **OPTIMIZATION_DEFAULTS))
+
+    def test_optimization_changes_cannot_be_silently_resumed(self):
+        for key, value in dict(accumulation_steps=2, weight_decay=.01, warmup_epochs=1,
+                               ema_decay=.999, ema_device='cpu', gradient_checkpointing=True).items():
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, key):
+                validate_resume(self.state, dict(self.config, **{key: value}))
+
+    def test_convnext_init_and_resume_validate_selected_architecture(self):
+        config = dict(self.config, architecture='convnext_tiny')
+        state = copy.deepcopy(self.state)
+        state['config'] = config
+        state['best_payload']['architecture'] = 'convnext_tiny'
+        validate_init(state['best_payload'], 64, True, 'convnext_tiny')
+        validate_resume(state, config)
+        with self.assertRaisesRegex(ValueError, 'architecture'):
+            validate_init(state['best_payload'], 64, True)
+
+    def test_ema_epoch_boundary_roundtrip_matches_uninterrupted_updates(self):
+        ema = ModelEMA(self.parts[0], .9)
+        ema.update(self.parts[0])
+        config = dict(self.config, ema_decay=.9)
+        saved = roundtrip(capture_training_state(*self.parts, config, 1, .6, self.best, ema=ema))
+        epoch(self.parts)
+        ema.update(self.parts[0])
+        resumed = components()
+        resumed_ema = ModelEMA(resumed[0], .9)
+        restore_training_state(saved, *resumed, config, ema=resumed_ema)
+        epoch(resumed)
+        resumed_ema.update(resumed[0])
+        self.assertEqual(ema.updates, resumed_ema.updates)
+        for key, value in ema.module.state_dict().items():
+            self.assertTrue(torch.equal(value, resumed_ema.module.state_dict()[key]), key)
+        with self.assertRaisesRegex(ValueError, 'EMA'):
+            restore_training_state(saved, *components(), config)
+        with self.assertRaisesRegex(ValueError, 'EMA'):
+            validate_resume(dict(saved, ema=None), config)
 
     def test_atomic_save_commits_only_after_success(self):
         # In-memory file descriptor mock avoids host temporary-directory ACL assumptions.

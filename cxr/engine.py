@@ -7,10 +7,11 @@ from pathlib import Path
 import numpy as np
 import torch
 from PIL import Image, ImageOps
-from torch import nn
 from torch.utils.data import Dataset
-from torchvision import models, transforms
+from torchvision import transforms
 from torchvision.transforms import InterpolationMode
+from .models import (SUPPORTED_ARCHITECTURES, create_model,
+                     load_imagenet_backbone)
 
 CLASS_NAMES = ['Enlarged Cardiomediastinum', 'Pneumothorax', 'Consolidation',
                'Pneumonia', 'Edema', 'Cardiomegaly', 'Atelectasis', 'Lung Opacity',
@@ -78,29 +79,12 @@ class ImageDataset(Dataset):
         return tensor, target
 
 
-def create_model():
-    # Never implicitly download or initialize from an unknown checkpoint.
-    model = models.resnet18(weights=None)
-    model.fc = nn.Linear(model.fc.in_features, 10)
-    return model
-
-
-def load_imagenet_backbone(model, path):
-    expected = 'f37072fd47e89c5e827621c5baffa7500819f7896bbacec160b1a16c560e07ec'
-    if sha256(path) != expected:
-        raise ValueError('This baseline accepts only the recorded official ImageNet ResNet18 checkpoint; audit new sources before extending')
-    state = torch.load(path, map_location='cpu', weights_only=True)
-    state = {k: v for k, v in state.items() if not k.startswith('fc.')}
-    result = model.load_state_dict(state, strict=False)
-    if set(result.missing_keys) != {'fc.weight', 'fc.bias'} or result.unexpected_keys:
-        raise ValueError('Not a compatible torchvision ResNet18 backbone')
-
-
 class Predictor:
     """Shared by predict.py and cost.py; per-image fixed-parameter inference."""
     def __init__(self, checkpoint, device='auto'):
         payload = torch.load(checkpoint, map_location='cpu', weights_only=True)
-        if payload.get('architecture') != 'resnet18' or payload.get('class_ids') != list(range(1, 11)):
+        architecture = payload.get('architecture')
+        if architecture not in SUPPORTED_ARCHITECTURES or payload.get('class_ids') != list(range(1, 11)):
             raise ValueError('Unsupported architecture or class order')
         from .metrics import _thresholds
         size = payload.get('image_size')
@@ -108,7 +92,7 @@ class Predictor:
             raise ValueError('Invalid checkpoint image size')
         self.smoke = bool(payload.get('smoke', False))
         self.device = choose_device(device)
-        self.model = create_model()
+        self.model = create_model() if architecture == 'resnet18' else create_model(architecture)
         self.model.load_state_dict(payload['model'])
         self.model.to(self.device).eval()
         self.transform = image_transform(payload['image_size'], False)

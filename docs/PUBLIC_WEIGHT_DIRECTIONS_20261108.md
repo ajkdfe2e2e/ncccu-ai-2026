@@ -1,0 +1,53 @@
+# Public CXR weight directions (2026-11-08)
+
+This is a research note for choosing up to two public-weight directions for a later, fixed local comparison. It is not a performance claim. At the original research snapshot no weights had been downloaded or locally evaluated. Subsequent preparation downloaded the pinned EVA-X checkpoint and official code, verified the weight size/SHA256, and safely inspected its tensors on CPU; see `outputs/eva-x-preparation-20261108`. No EVA-X real-data fitting or AUC evaluation has occurred. Repository revisions and artifact URLs are pinned so a later run can reproduce its inputs.
+
+## Current reference and local integration context
+
+- The current official-validation reference recorded in `PROJECT_STATUS.md` is Macro-AUC **0.8335505264** for the CXR-LT ConvNeXtV2 candidate. The user-reported online best remains the older ensemble at 78.53; these are different measurements and are not directly comparable.
+- This repository contains the CXR-LT ConvNeXtV2 CSRA/DB-CAS checkpoint and adapter, pinned to `hieuphamha/cxrlt2026-task1-convnextv2` revision `24bf8bdfd8d0262899167b030be16ab89f78ae20`. The locally present safetensors file is `convnextv2_base_mimic-cxr_padchest_csra_dbcas.safetensors` (351,075,736 bytes; SHA-256 `6950f7b97422b807e16a821a954e5d62b6868f8fbfb1e841f6d090c91e4ca17b`). The completed local experiment used this CSRA/DB-CAS model, not the standard MLP variant.
+- The same pinned upstream model repository documents `convnextv2_base_padchest_standard_mlp.safetensors` (~353 MB) and provides a reference model definition and strict-loading example. That standard-MLP file is **not present** in the local `weights/medical/cxrlt2026-convnextv2` directory. Relative to EVA-X, this is the closer integration path because it reuses the ConvNeXtV2 family, the repository's existing data/preprocessing and provenance conventions, and the existing CXR-LT loading work. It is not a ready-made local ten-label classifier: its documented head has 30 PadChest classes, so the local label mapping/head still needs a separately fixed implementation. Upstream README describes standard MLP as a reproducible baseline/ensemble candidate and recommends CSRA/DB-CAS for single-model inference; neither statement predicts local performance.
+
+## Candidate 1: EVA-X-S with CheXpert head
+
+**Research priority:** first new backbone direction to compare. This is a practical prioritization based on a small checkpoint and direct supervised coverage of five local labels, not an empirically established winner.
+
+- **Immutable model revision:** `MapleF/eva_x@35ddcd6dab6ca99bbdb6cb45c8d1b093aefbd0ee`.
+- **Model repository:** [Hugging Face model revision](https://huggingface.co/MapleF/eva_x/tree/35ddcd6dab6ca99bbdb6cb45c8d1b093aefbd0ee).
+- **Direct checkpoint URL:** [eva_x_small_patch16_merged520k_mim_chexpert_ft.pth](https://huggingface.co/MapleF/eva_x/resolve/35ddcd6dab6ca99bbdb6cb45c8d1b093aefbd0ee/eva_x_small_patch16_merged520k_mim_chexpert_ft.pth).
+- **Artifact size and digest:** 260,339,517 bytes; LFS SHA-256 `1a5b63570ca4094c1118018e44d3012a95b904132942a8edb2fc0e5dc8aa0e97`.
+- **Original implementation:** [HUSTVL/EVA-X at commit eedd642c85339b25682ceb574b644cb9afe88e62](https://github.com/hustvl/EVA-X/tree/eedd642c85339b25682ceb574b644cb9afe88e62). The exact CheXpert launch/config is [vit_s.sh](https://github.com/hustvl/EVA-X/blob/eedd642c85339b25682ceb574b644cb9afe88e62/classification/train_files/eva_x/chexpert/vit_s.sh). **Correction from actual-checkpoint inspection:** its `args.model` is `eva02_small_patch16_xattn_fusedLN_SwiGLU_preln_RoPE`; the corresponding training definition is `classification/models/models_eva.py`, not the unrelated vanilla ViT in `models_vit.py`. The checkpoint's `rope.freqs_*`, per-block `q_bias`/`v_bias`, and `mlp.w12`/`w3` keys independently confirm rotary attention and SwiGLU. Upstream root `eva_x.py` provides an author-supported timm EVA implementation and explicit checkpoint filter. Evaluation transforms and CheXpert target handling are in [datasets.py](https://github.com/hustvl/EVA-X/blob/eedd642c85339b25682ceb574b644cb9afe88e62/classification/utils/datasets.py) and [dataloader_med.py](https://github.com/hustvl/EVA-X/blob/eedd642c85339b25682ceb574b644cb9afe88e62/classification/utils/dataloader_med.py).
+- **Verified model shape/coverage:** ViT-S/16, 224-pixel input, 384-dimensional mean-pooled patch representation; the fine-tuned head has five outputs ordered Atelectasis, Cardiomegaly, Consolidation, Edema, Pleural Effusion. These directly match five local target names. For the remaining five targets, a fresh local study-level ten-output head is required. Do not treat the pretrained five-output head as a complete local classifier.
+- **Official evaluation preprocessing:** convert image to RGB; resize the shorter edge to 256 with bicubic interpolation; center crop to 224×224; convert to tensor /255; normalize all channels with mean `0.49185243` and standard deviation `0.28509309`. Do not add equalization or other transforms unless a later protocol explicitly pre-registers them.
+- **Uncertain-label rule:** the official CheXpert loader maps uncertain Atelectasis and Edema to positive, and uncertain Cardiomegaly, Consolidation, and Pleural Effusion to negative. This rule describes the source training labels; it does not prescribe changes to local labels.
+- **License:** the Hugging Face model repository metadata identifies the checkpoint repository as MIT. The upstream EVA-X code repository declares Apache-2.0. Preserve both provenance records and confirm any applicable upstream dataset terms before redistribution.
+- **Uncertainty:** public CheXpert pretraining exposure may overlap local source data; local patient/image overlap is unknown. Public source performance is not evidence of local performance. Memory fit is estimated from artifact size and ViT-S architecture only; runtime has not been tested on the available laptop GPU.
+
+## Candidate 2: CheXficient image embeddings
+
+**Research priority:** second direction, complementary to a supervised five-label head. It offers a CXR image-text representation but requires a new local classifier and is a larger setup.
+
+- **Immutable model revision:** `StanfordAIMI/CheXficient@34bb5ea905c4cb504d2b73c9a6687a5d5082f52a`.
+- **Model repository/config:** [Hugging Face revision](https://huggingface.co/StanfordAIMI/CheXficient/tree/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a) and pinned [config.json](https://huggingface.co/StanfordAIMI/CheXficient/blob/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/config.json).
+- **Direct checkpoint URL:** [model.safetensors](https://huggingface.co/StanfordAIMI/CheXficient/resolve/34bb5ea905c4cb504d2b73c9a6687a5d5082f52a/model.safetensors).
+- **Artifact size and digest:** 780,793,036 bytes; LFS SHA-256 `f691262c3f77c3c850bebff420180602cf4ca5d5214449e377366f3205548336`.
+- **Original implementation and method:** [cwangrun/CheXficient at commit 53a5dc61c4fd0b7d8217dd32169fb0aa2dd9156a](https://github.com/cwangrun/CheXficient/tree/53a5dc61c4fd0b7d8217dd32169fb0aa2dd9156a); [paper](https://arxiv.org/abs/2602.22843).
+- **Verified architecture/use:** config and implementation specify a DINOv2 ViT-B/14 image encoder, BioClinicalBERT text encoder, 378-pixel image input, and 512-dimensional projected image embedding. There is no supervised ten-label disease head. The local study head can use the normalized 512-dimensional projected image embedding; the image encoder also exposes a 768-dimensional CLS representation. The model card's `base_model` metadata says DINOv2-small, which conflicts with the pinned config/code; use the pinned config and implementation for reconstruction and record this metadata discrepancy.
+- **Official image preprocessing:** RGB conversion; resize shortest edge to 378 and center crop to 378×378; bicubic resampling; scale by 1/255; CLIP mean `[0.48145466, 0.4578275, 0.40821073]` and standard deviation `[0.26862954, 0.26130258, 0.27577711]`.
+- **License:** the Hugging Face model card/repository identifies the model as MIT. Training sources include public CXR datasets; applicable data terms and overlap with the anonymous local cohort remain unresolved.
+- **Uncertainty:** the checkpoint is about three times the EVA-X-S artifact size and initialization may also fetch image/text encoder dependencies. Batch-2 mixed-precision inference was only an architecture-based memory estimate; it has not been run on the laptop GPU.
+
+## Attempted and untried directions
+
+- **Previously attempted/current reference:** the local CXR-LT ConvNeXtV2 CSRA/DB-CAS checkpoint, plus its patient-grouped study-level probe. Current recorded official-valid Macro-AUC is 0.8335505264. The local standard-MLP checkpoint variant has not been evaluated; its file is not currently present locally.
+- **Previously explored in the project:** Rad-DINO, CXformer, public model fusion, and CXR-LT head/bottleneck variants are documented in the project results. They are context, not additional candidates proposed here.
+- **No local performance experiment yet:** EVA-X-S CheXpert and CheXficient. EVA-X preparation subsequently downloaded and hash-verified the pinned checkpoint and source, and safely inspected the checkpoint on CPU. CheXficient remains metadata-only. Neither candidate has been fit or scored locally; engineering checks do not establish a performance gain.
+
+## Fixed comparison protocol for a later run
+
+1. Freeze the exact revisions and artifact hashes above before any local fitting. Use each source's documented preprocessing without per-class changes.
+2. Extract frozen image features only from the existing train partition, then aggregate images to studies using the project's existing study contract. Fit a fresh, patient-grouped out-of-fold ten-label head; keep standardization and all fitted transforms inside each training fold.
+3. Compare candidates on the same study IDs and fixed splits. Use the single official validation comparison only after fixing the candidate recipe; do not choose classes, transforms, or thresholds from per-class validation outcomes.
+4. Audit possible patient/image overlap with each public pretraining source before interpreting validation results. This audit may be inconclusive because the local cohort is anonymized.
+
+No local performance result is available for either untried candidate. Public benchmarks, architecture-based memory estimates, and the prioritization above must not be reported as expected or observed local gains.

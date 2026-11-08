@@ -1,0 +1,264 @@
+{
+  "scope": "Validation-selected medical-model research recipe; no scores or patient-level metadata included",
+  "formula": "selected[class] = alpha_candidate * candidate[class] + (1 - alpha_candidate) * immutable_baseline[class]",
+  "baseline": {
+    "name": "immutable_saved_ensemble",
+    "folder": "outputs/ensemble-valid",
+    "probabilities_sha256": "71c04484535e92c0b31e36b80598bbb686d37dbfc35558342307927de1bd20fb",
+    "report_sha256": "ad635c2727a18ed8178e82c70f2ea7786a924358b23038b17ad83134ad5512ec",
+    "reported_macro_auc": 0.8193622646357342
+  },
+  "baseline_per_class_selection": [
+    {
+      "class": 1,
+      "label": "Enlarged Cardiomediastinum",
+      "auc": 0.707185628742515,
+      "kind": "full_model_blend",
+      "left": "resnet18_baseline",
+      "right": "rad_dino_finetuned",
+      "alpha_left": 0.44
+    },
+    {
+      "class": 2,
+      "label": "Pneumothorax",
+      "auc": 0.8836719931610443,
+      "kind": "full_model_blend",
+      "left": "rad_dino_finetuned",
+      "right": "densenet121_chexpert",
+      "alpha_left": 0.28
+    },
+    {
+      "class": 3,
+      "label": "Consolidation",
+      "auc": 0.8536017968875341,
+      "kind": "external_blend",
+      "external_model": "rad_dino_vitB_768",
+      "base_model": "resnet18_baseline",
+      "alpha_external": 0.98
+    },
+    {
+      "class": 4,
+      "label": "Pneumonia",
+      "auc": 0.7356101732728489,
+      "kind": "full_model_blend",
+      "left": "rad_dino_finetuned",
+      "right": "densenet121_chexpert",
+      "alpha_left": 0.6
+    },
+    {
+      "class": 5,
+      "label": "Edema",
+      "auc": 0.8929990649836372,
+      "kind": "external_blend",
+      "external_model": "medmae_vitb_nih_B_768_s2",
+      "base_model": "rad_dino_finetuned",
+      "alpha_external": 0.6
+    },
+    {
+      "class": 6,
+      "label": "Cardiomegaly",
+      "auc": 0.7945640108023925,
+      "kind": "external_blend",
+      "external_model": "rad_dino_vitB_768",
+      "base_model": "resnet18_baseline",
+      "alpha_external": 0.54
+    },
+    {
+      "class": 7,
+      "label": "Atelectasis",
+      "auc": 0.7906922466507958,
+      "kind": "external_blend",
+      "external_model": "rad_dino_vitB_768",
+      "base_model": "rad_dino_finetuned",
+      "alpha_external": 0.38
+    },
+    {
+      "class": 8,
+      "label": "Lung Opacity",
+      "auc": 0.7364630877345505,
+      "kind": "full_model_blend",
+      "left": "resnet18_baseline",
+      "right": "rad_dino_finetuned",
+      "alpha_left": 0.42
+    },
+    {
+      "class": 9,
+      "label": "Pleural Effusion",
+      "auc": 0.9208488506485167,
+      "kind": "external_blend",
+      "external_model": "rad_dino_vitB_768",
+      "base_model": "rad_dino_finetuned",
+      "alpha_external": 0.4
+    },
+    {
+      "class": 10,
+      "label": "No Finding",
+      "auc": 0.8779857934735076,
+      "kind": "full_model_blend",
+      "left": "resnet18_baseline",
+      "right": "rad_dino_finetuned",
+      "alpha_left": 0.34
+    }
+  ],
+  "classes": [
+    {
+      "class": 1,
+      "label": "Enlarged Cardiomediastinum",
+      "source": "yaLLMan/rad-dino-chexpert fine-tuned on the local train split",
+      "alpha_candidate": 0.5,
+      "provenance": {
+        "model": "yaLLMan/rad-dino-chexpert fine-tuned on the local train split",
+        "folder": "outputs/rad-dino-best-tta-valid-20261105",
+        "model_revision": "db02e1b7234dd83c6d7c4485963ef5b22df9e5db",
+        "weights_sha256": "ed88d2dfb23b1a6cb9ea82128642dd4b24b781f912b90ce5dde17616b9473e73",
+        "checkpoint_sha256": "ed88d2dfb23b1a6cb9ea82128642dd4b24b781f912b90ce5dde17616b9473e73",
+        "horizontal_flip_tta": true,
+        "probabilities_sha256": "3526c432a99b5fcfc23c08500afb04286807f7f1357a02c0a20cc2b38bfb2ae0",
+        "report_sha256": "1a4f2abfff1741341f1bfe18c3e8c0196d83bf9eb8b584236e8fd8fa46ee2405"
+      }
+    },
+    {
+      "class": 2,
+      "label": "Pneumothorax",
+      "source": "immutable_saved_ensemble",
+      "alpha_candidate": 0.0,
+      "provenance": {
+        "name": "immutable_saved_ensemble",
+        "folder": "outputs/ensemble-valid",
+        "probabilities_sha256": "71c04484535e92c0b31e36b80598bbb686d37dbfc35558342307927de1bd20fb",
+        "report_sha256": "ad635c2727a18ed8178e82c70f2ea7786a924358b23038b17ad83134ad5512ec",
+        "reported_macro_auc": 0.8193622646357342
+      }
+    },
+    {
+      "class": 3,
+      "label": "Consolidation",
+      "source": "mamounyosef/chest-xray-bench/medmae_vitb_nih_B_768_s2_seed1337",
+      "alpha_candidate": 0.25,
+      "provenance": {
+        "model": "mamounyosef/chest-xray-bench/medmae_vitb_nih_B_768_s2_seed1337",
+        "folder": "outputs/chest-xray-bench-new-valid-20261105/medmae_vitb_nih_B_768_s2_seed1337",
+        "model_revision": "1735afb88371d98f87667c5f9966ed47bf4ef678",
+        "weights_sha256": "a8a4247e448cefa65207a9041d16eda29f3dd853084a5db3e1ca3684dd4b8dee",
+        "checkpoint_sha256": null,
+        "horizontal_flip_tta": null,
+        "probabilities_sha256": "46853c202df2b29a7b6dbe3a61fee0508b66e418df0876ccbc538d2968c070c5",
+        "report_sha256": "e865c93d7291875ca21bbbac14d5c91740cf2adb3e6ce6d37144479e6a58b6df"
+      }
+    },
+    {
+      "class": 4,
+      "label": "Pneumonia",
+      "source": "yaLLMan/rad-dino-chexpert fine-tuned on the local train split",
+      "alpha_candidate": 0.25,
+      "provenance": {
+        "model": "yaLLMan/rad-dino-chexpert fine-tuned on the local train split",
+        "folder": "outputs/rad-dino-best-tta-valid-20261105",
+        "model_revision": "db02e1b7234dd83c6d7c4485963ef5b22df9e5db",
+        "weights_sha256": "ed88d2dfb23b1a6cb9ea82128642dd4b24b781f912b90ce5dde17616b9473e73",
+        "checkpoint_sha256": "ed88d2dfb23b1a6cb9ea82128642dd4b24b781f912b90ce5dde17616b9473e73",
+        "horizontal_flip_tta": true,
+        "probabilities_sha256": "3526c432a99b5fcfc23c08500afb04286807f7f1357a02c0a20cc2b38bfb2ae0",
+        "report_sha256": "1a4f2abfff1741341f1bfe18c3e8c0196d83bf9eb8b584236e8fd8fa46ee2405"
+      }
+    },
+    {
+      "class": 5,
+      "label": "Edema",
+      "source": "mamounyosef/chest-xray-bench/medmae_vitb_nih_B_768_s2_seed1337",
+      "alpha_candidate": 0.5,
+      "provenance": {
+        "model": "mamounyosef/chest-xray-bench/medmae_vitb_nih_B_768_s2_seed1337",
+        "folder": "outputs/chest-xray-bench-new-valid-20261105/medmae_vitb_nih_B_768_s2_seed1337",
+        "model_revision": "1735afb88371d98f87667c5f9966ed47bf4ef678",
+        "weights_sha256": "a8a4247e448cefa65207a9041d16eda29f3dd853084a5db3e1ca3684dd4b8dee",
+        "checkpoint_sha256": null,
+        "horizontal_flip_tta": null,
+        "probabilities_sha256": "46853c202df2b29a7b6dbe3a61fee0508b66e418df0876ccbc538d2968c070c5",
+        "report_sha256": "e865c93d7291875ca21bbbac14d5c91740cf2adb3e6ce6d37144479e6a58b6df"
+      }
+    },
+    {
+      "class": 6,
+      "label": "Cardiomegaly",
+      "source": "yaLLMan/rad-dino-chexpert fine-tuned on the local train split",
+      "alpha_candidate": 0.25,
+      "provenance": {
+        "model": "yaLLMan/rad-dino-chexpert fine-tuned on the local train split",
+        "folder": "outputs/rad-dino-best-tta-valid-20261105",
+        "model_revision": "db02e1b7234dd83c6d7c4485963ef5b22df9e5db",
+        "weights_sha256": "ed88d2dfb23b1a6cb9ea82128642dd4b24b781f912b90ce5dde17616b9473e73",
+        "checkpoint_sha256": "ed88d2dfb23b1a6cb9ea82128642dd4b24b781f912b90ce5dde17616b9473e73",
+        "horizontal_flip_tta": true,
+        "probabilities_sha256": "3526c432a99b5fcfc23c08500afb04286807f7f1357a02c0a20cc2b38bfb2ae0",
+        "report_sha256": "1a4f2abfff1741341f1bfe18c3e8c0196d83bf9eb8b584236e8fd8fa46ee2405"
+      }
+    },
+    {
+      "class": 7,
+      "label": "Atelectasis",
+      "source": "yaLLMan/rad-dino-chexpert fine-tuned on the local train split",
+      "alpha_candidate": 0.25,
+      "provenance": {
+        "model": "yaLLMan/rad-dino-chexpert fine-tuned on the local train split",
+        "folder": "outputs/rad-dino-best-tta-valid-20261105",
+        "model_revision": "db02e1b7234dd83c6d7c4485963ef5b22df9e5db",
+        "weights_sha256": "ed88d2dfb23b1a6cb9ea82128642dd4b24b781f912b90ce5dde17616b9473e73",
+        "checkpoint_sha256": "ed88d2dfb23b1a6cb9ea82128642dd4b24b781f912b90ce5dde17616b9473e73",
+        "horizontal_flip_tta": true,
+        "probabilities_sha256": "3526c432a99b5fcfc23c08500afb04286807f7f1357a02c0a20cc2b38bfb2ae0",
+        "report_sha256": "1a4f2abfff1741341f1bfe18c3e8c0196d83bf9eb8b584236e8fd8fa46ee2405"
+      }
+    },
+    {
+      "class": 8,
+      "label": "Lung Opacity",
+      "source": "yaLLMan/rad-dino-chexpert fine-tuned on the local train split",
+      "alpha_candidate": 0.5,
+      "provenance": {
+        "model": "yaLLMan/rad-dino-chexpert fine-tuned on the local train split",
+        "folder": "outputs/rad-dino-best-tta-valid-20261105",
+        "model_revision": "db02e1b7234dd83c6d7c4485963ef5b22df9e5db",
+        "weights_sha256": "ed88d2dfb23b1a6cb9ea82128642dd4b24b781f912b90ce5dde17616b9473e73",
+        "checkpoint_sha256": "ed88d2dfb23b1a6cb9ea82128642dd4b24b781f912b90ce5dde17616b9473e73",
+        "horizontal_flip_tta": true,
+        "probabilities_sha256": "3526c432a99b5fcfc23c08500afb04286807f7f1357a02c0a20cc2b38bfb2ae0",
+        "report_sha256": "1a4f2abfff1741341f1bfe18c3e8c0196d83bf9eb8b584236e8fd8fa46ee2405"
+      }
+    },
+    {
+      "class": 9,
+      "label": "Pleural Effusion",
+      "source": "RussellALA/convnext-chexpert-seed1",
+      "alpha_candidate": 0.5,
+      "provenance": {
+        "model": "RussellALA/convnext-chexpert-seed1",
+        "folder": "outputs/russellala-convnext-valid",
+        "model_revision": "0444dbe62e26e0206b485c7771b06530b19e66f7",
+        "weights_sha256": "d31eb9c739fe19d2aa8ed14a440886f39e4ce547f0d24d6133735c06c9a85c45",
+        "checkpoint_sha256": null,
+        "horizontal_flip_tta": null,
+        "probabilities_sha256": "8a5b66ca9f0cb44bb5c4a570ab23080ba796fd491d17557b11d52e37f24a4456",
+        "report_sha256": "ff44f96cf339b8fa92e271f4c88a05b4136e551bc975a8d0388855f327484925"
+      }
+    },
+    {
+      "class": 10,
+      "label": "No Finding",
+      "source": "yaLLMan/rad-dino-chexpert fine-tuned on the local train split",
+      "alpha_candidate": 0.25,
+      "provenance": {
+        "model": "yaLLMan/rad-dino-chexpert fine-tuned on the local train split",
+        "folder": "outputs/rad-dino-best-tta-valid-20261105",
+        "model_revision": "db02e1b7234dd83c6d7c4485963ef5b22df9e5db",
+        "weights_sha256": "ed88d2dfb23b1a6cb9ea82128642dd4b24b781f912b90ce5dde17616b9473e73",
+        "checkpoint_sha256": "ed88d2dfb23b1a6cb9ea82128642dd4b24b781f912b90ce5dde17616b9473e73",
+        "horizontal_flip_tta": true,
+        "probabilities_sha256": "3526c432a99b5fcfc23c08500afb04286807f7f1357a02c0a20cc2b38bfb2ae0",
+        "report_sha256": "1a4f2abfff1741341f1bfe18c3e8c0196d83bf9eb8b584236e8fd8fa46ee2405"
+      }
+    }
+  ],
+  "source_manifest": "docs/public_model_manifest.json",
+  "validation_selection_limitation": "The immutable baseline ensemble was selected using this validation set. Fold coefficients are fit only on the other two patient groups, but baseline preselection on all validation labels biases both the per-candidate and combined-selection diagnostics; neither is an unbiased generalization estimate."
+}

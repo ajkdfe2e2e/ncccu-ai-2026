@@ -18,6 +18,10 @@ RESUME_KEYS = (
     'workers', 'seed', 'epochs', 'lr', 'scheduler', 'min_lr', 'smoke_studies',
     'train_manifest_sha256', 'valid_manifest_sha256', 'device', 'torch_version',
 )
+# Missing fields in v1 ResNet runs mean the original training behavior.
+OPTIMIZATION_DEFAULTS = dict(accumulation_steps=1, weight_decay=0.0001,
+                             warmup_epochs=0, ema_decay=0., ema_device='model',
+                             gradient_checkpointing=False)
 
 
 def cpu_snapshot(value):
@@ -52,9 +56,9 @@ def safe_load(path):
     return torch.load(path, map_location='cpu', weights_only=True)
 
 
-def validate_init(payload, image_size, smoke):
-    if not isinstance(payload, dict) or payload.get('architecture') != 'resnet18':
-        raise ValueError('Init checkpoint architecture must be resnet18')
+def validate_init(payload, image_size, smoke, architecture='resnet18'):
+    if not isinstance(payload, dict) or payload.get('architecture') != architecture:
+        raise ValueError(f'Init checkpoint architecture must be {architecture}')
     if payload.get('class_ids') != list(range(1, 11)):
         raise ValueError('Init checkpoint class order does not match')
     if payload.get('image_size') != image_size:
@@ -98,6 +102,8 @@ def validate_resume(state, config):
     if config.get('workers') != 0 or saved.get('workers') != 0:
         raise ValueError('Exact resume requires --workers 0 in both original and resumed runs')
     differences = [key for key in RESUME_KEYS if key not in config or key not in saved or config[key] != saved[key]]
+    differences += [key for key, default in OPTIMIZATION_DEFAULTS.items()
+                    if config.get(key, default) != saved.get(key, default)]
     if differences:
         raise ValueError('Incompatible resume configuration: ' + ', '.join(differences))
     epoch = state.get('completed_epochs')
@@ -106,28 +112,36 @@ def validate_resume(state, config):
     required = ('model', 'optimizer', 'scaler', 'scheduler', 'rng', 'best_score', 'best_payload')
     if any(key not in state for key in required) or state['best_payload'] is None:
         raise ValueError('Incomplete training state or missing previous best payload')
-    validate_init(state['best_payload'], config['image_size'], bool(config['smoke_studies']))
+    validate_init(state['best_payload'], config['image_size'], bool(config['smoke_studies']),
+                  config['architecture'])
     if (state['scheduler'] is None) != (config['scheduler'] == 'none'):
         raise ValueError('Scheduler state does not match configuration')
+    if (state.get('ema') is None) != (config.get('ema_decay', 0.) == 0.):
+        raise ValueError('EMA state does not match configuration')
 
 
 def capture_training_state(model, optimizer, scaler, scheduler, generator, config,
-                           completed_epochs, best_score, best_payload):
+                           completed_epochs, best_score, best_payload, ema=None):
     return dict(format_version=FORMAT_VERSION, config=copy.deepcopy(config),
                 completed_epochs=completed_epochs, model=cpu_snapshot(model.state_dict()),
                 optimizer=cpu_snapshot(optimizer.state_dict()), scaler=cpu_snapshot(scaler.state_dict()),
                 scheduler=cpu_snapshot(scheduler.state_dict()) if scheduler is not None else None,
                 rng=capture_rng(generator), best_score=best_score,
-                best_payload=cpu_snapshot(best_payload))
+                best_payload=cpu_snapshot(best_payload),
+                ema=cpu_snapshot(ema.state_dict()) if ema is not None else None)
 
 
-def restore_training_state(state, model, optimizer, scaler, scheduler, generator, config):
+def restore_training_state(state, model, optimizer, scaler, scheduler, generator, config, ema=None):
     validate_resume(state, config)
+    if (ema is None) != (state.get('ema') is None):
+        raise ValueError('Construct the configured EMA before restoring training state')
     model.load_state_dict(state['model'])
     optimizer.load_state_dict(state['optimizer'])
     scaler.load_state_dict(state['scaler'])
     if scheduler is not None:
         scheduler.load_state_dict(state['scheduler'])
+    if ema is not None:
+        ema.load_state_dict(state['ema'])
     # Restore last: construction/loading must not consume randomness after this point.
     restore_rng(state['rng'], generator)
     return state['completed_epochs'], state['best_score'], cpu_snapshot(state['best_payload'])
