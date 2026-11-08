@@ -111,12 +111,16 @@
     "gate": 0.5,
     "csv_sha256": "7590ef61172423348bcf9a0c9afdb578b5416396d41a1c9357b03b0df232ec68",
     "head_reload_max_probability_error": 0.0,
-    "online_score": null
+    "online_score": 78.98,
+    "online_score_source": "User reported on 2026-11-08; attached CSV SHA-256 matches local delivery; platform metric definition not confirmed"
   },
   "online_scores_user_reported": {
     "legacy_fusion": 78.53,
     "rad_dino_A_ema": 77.34,
-    "metric_definition": "Not confirmed"
+    "metric_definition": "Not confirmed",
+    "cxrlt_study_probe": 78.98,
+    "current_best": "cxrlt_study_probe",
+    "cxrlt_gain_over_legacy_points": 0.45
   },
   "limitations": [
     "Finite-candidate OOF selection estimate; not unbiased generalization evidence.",
