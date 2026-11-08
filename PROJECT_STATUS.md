@@ -1,4 +1,4 @@
-# 当前进度：保留线上 78.98 模型，患者聚合未晋级（2026-11-08）
+# 当前进度：保留线上 78.98 模型，CheXficient 提取训练特征（2026-11-08）
 
 用户最新反馈 `submission_test_1414_best_auc_083355_20261108.csv` 的线上成绩为 **78.98**，超过旧融合 **78.53**，提高 **0.45 分**。已核对用户附件与本地交付 CSV 的 SHA-256 完全一致，该 CXR-LT 方案为当前保留模型及已反馈的线上最好。官方主指标为 Macro-AUC，若反馈来自主分栏，则展示精度对应 **0.7898**；用户页面与榜单划分尚未独立读取。详见 [线上结果记录](docs/ONLINE_RESULTS_20261108.md) 和 [官方评分口径及医学预训练研究边界](docs/OFFICIAL_SCORING_20261108.md)。后续实验以当前模型比较；既有冻结方案与原始产物保持不变。
 
@@ -6,7 +6,7 @@
 
 EVA-X 本轮已于北京时间 13:10:03 正常完成，两个候选均未晋级：EVA389D 完整患者 OOF **0.8153107264**；CXR-LT+EVA1443D 为 **0.8274166581**，相对当前 **+0.0003782277**，不足固定的 +0.001 门槛。独立 verifier 重算全部 OOF 与八个头通过，最大重放误差 `4.996e-16`；未拟合全量头、未评估 valid/test、未导出新 CSV。见 [EVA-X 结果](docs/EVA_STUDY_PROBE_RESULTS_20261108.md)。
 
-CheXficient 已完成实际图像权重加载、固定原始预处理对照和 CPU 工程检查；尚未注册真实实验、计算真实 AUC 或生成 test CSV，见 [接入检查](docs/CHEXFICIENT_PREPARATION_20261108.md)。持续提升目标仍为 active。以下为上传时快照和保留的历史实验记录，其中“最高 valid”“尚无线上分数”“仍在提取”等描述属于当时状态，当前采用模型与最新候选以上方结果为准。
+CheXficient 实验已正式注册并启动：北京时间 **14:37:16** prepare 完成，**14:38:17** 从冻结源码启动，真实 worker PID **54160**；**14:39:32** 状态为 `running/extract_chexficient_train`、训练特征 **304/30,344** 张、`error=null`。固定 batch4、预处理线程2、CUDA float16 AMP；无其它真实训练/特征提取任务。21 项 runner 定向测试、379 项 CPU 回归与编译通过，独立审查核验 20 项源码锁、142 项输入锁、127 项快照锁及两个已结束实验的独立证据。计划 SHA-256 `f71f2c370ecb5c78228884d0dd315a2c3481cf4875adc310af88ac5ae8e8acb4`；valid/test 矩阵尚未物化，`test_extracted=false`，没有新 AUC 或 CSV。仅评估 CheXficient512D 与 CXR-LT+CheXficient1566D 的固定四患者组 OOF，合格候选才进入一次 official valid 与必要的 test 导出。见 [固定方案](docs/CHEXFICIENT_STUDY_PROBE_PLAN_20261108.md)和 [接入检查](docs/CHEXFICIENT_PREPARATION_20261108.md)。持续提升目标仍为 active。以下为上传时快照和保留的历史实验记录，其中“最高 valid”“尚无线上分数”“仍在提取”等描述属于当时状态，当前采用模型与最新候选以上方结果为准。
 
 ---
 

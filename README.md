@@ -12,7 +12,9 @@
 
 后续嵌套分类头、语义瓶颈及末阶段微调均未替换当前模型。末阶段微调完整 OOF 为 **0.8169781872**。EVA-X 于北京时间 13:10:03 完成：独立 EVA 特征 OOF **0.8153107264**，与 CXR-LT 联合特征 OOF **0.8274166581**，后者相对当前仅增 **0.0003782277**，未达到固定的 0.001 晋级门槛。独立 NumPy 头重放与完整 OOF 重算通过，本轮未评估 valid/test 或导出 CSV，详见 [EVA-X 结果](docs/EVA_STUDY_PROBE_RESULTS_20261108.md)。持续优化目标为 active；早期上传快照保留于 [进度记录](docs/PROGRESS_SNAPSHOT_20261108.md)。
 
-CheXficient 图像分支已完成实际权重 CPU 加载、预处理对照和合成测试，仅完成工程接入；尚无真实数据 AUC、训练或测试预测，详见 [接入检查](docs/CHEXFICIENT_PREPARATION_20261108.md)。可复核的聚合结果、公开来源和模型/预测 SHA-256 见 [当前配方](docs/best_study_probe_recipe_20261108.json)、[监督特征方案](docs/SUPERVISED_STUDY_PROBE_PLAN_20261108.md)及 [末阶段微调结果](docs/CXRLT_STAGE_FINETUNE_RESULTS_20261108.md)。本地验证集参与过多轮历史选优，公开预训练数据与匿名比赛数据的重叠情况未知；本地验证分数不代表线上分数或无偏泛化估计。
+CheXficient 图像分支已完成实际权重 CPU/GPU 合成检查、21 项 runner 定向测试和 379 项 CPU 回归。固定实验于北京时间 **14:38:17** 从冻结源码启动，实际 worker PID 54160；14:39:32 已完成训练特征 **304/30,344** 张。仅比较 CheXficient512D 与 CXR-LT+CheXficient1566D 两个检查级线性头，按四患者组完整 OOF 和一次 official valid 的固定门槛筛选；此时尚无候选 AUC、全量头或新 test CSV。计划 SHA-256 `f71f2c370ecb5c78228884d0dd315a2c3481cf4875adc310af88ac5ae8e8acb4`，20 项源码与 127 项输入快照锁的独立核验通过，valid/test 特征矩阵仍延迟。详见 [固定方案](docs/CHEXFICIENT_STUDY_PROBE_PLAN_20261108.md)与 [接入检查](docs/CHEXFICIENT_PREPARATION_20261108.md)。
+
+可复核的聚合结果、公开来源和模型/预测 SHA-256 见 [当前配方](docs/best_study_probe_recipe_20261108.json)、[监督特征方案](docs/SUPERVISED_STUDY_PROBE_PLAN_20261108.md)及 [末阶段微调结果](docs/CXRLT_STAGE_FINETUNE_RESULTS_20261108.md)。本地验证集参与过多轮历史选优，公开预训练数据与匿名比赛数据的重叠情况未知；本地验证分数不代表线上分数或无偏泛化估计。
 
 ## 历史研究结果（2026-11-05）
 
