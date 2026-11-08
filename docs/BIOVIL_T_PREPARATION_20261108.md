@@ -25,3 +25,7 @@
 首次独立注册核验器的相对路径匹配漏项，意外流式哈希了应延迟读取的CheXficient valid特征矩阵；未用NumPy加载矩阵进行拟合、预测或评分。原报告保持，修正后的 `outputs/biovil-t-study-probe-20261108-independent-registration-verification-v2.json` 明确记录该工程偏差并跳过此矩阵；正式执行器原有的延迟访问逻辑未改，原实验方案不变。
 
 **15:56:47** 以本地venv Python、`-B -u` 从冻结源码启动，launcher PID20960、实际worker PID**14512**；**15:56:56** 状态 `running / load_and_validate_train_cache`、`error=null`，随后进入 `extract_biovil_train`。**15:58:52** 已提交 **102/30,344** 张真实训练图像特征，进程存活，stderr仅有timm弃用提示。字节码写入关闭，避免修改冻结源码缓存。尚无本轮OOF/valid AUC、新CSV或新线上分数；后续实时状态以实验目录 `experiment.json` 和特征 `progress.json` 为准。
+
+其后正式实验于北京时间 **18:27:17** 正常结束，原计划、源码、输入与快照保持。训练30,344张、valid1,422张、test2,218张BioViL-T特征均完成；按原方案选中三编码器1,950D，完整患者OOF **0.8314702168**、official valid **0.8401943128**，通过固定双基线valid门槛。独立OOF与终态核验已通过，valid/test头重放概率最大误差0；本地核验器先后修复ID列表规范化、跨检查点一致标签证据去重覆盖、CheXficient来源清单路径假设，新增回归后OOF核验器16项、终态核验器11项测试通过。正式结果和统计规则不受这些核验器修正影响。
+
+已交付 `outputs/submission_test_1414_best_auc_084019_20261108.csv`，SHA-256 `2eeda38db046bfc78ae999d84fa7a43a858234d51dca4fd8c00606eb41c3ce67`，1,414次检查、14,140行、Gate=.5，原实验内CSV字节未改。新候选线上成绩保持null，已反馈线上最好仍为78.98。完整指标、实际核验范围与局限见[实验结果](BIOVIL_T_STUDY_PROBE_RESULTS_20261108.md)和[本地候选配方](biovil_t_study_probe_recipe_20261108.json)。

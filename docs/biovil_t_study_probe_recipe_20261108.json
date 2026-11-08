@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "scope": "Aggregate recipe and provenance only; no images, weights, patient/study IDs, features, or per-example predictions",
+  "experiment": "biovil-t-study-probe-20261108",
+  "decision": "Passed frozen local OOF/dual-valid gates and independent replay; online score unconfirmed",
+  "plan_sha256": "ee6efa98450f5e26e47672d2c5e59d457903faa474da478c14033f46ac3cd981",
+  "public_models": {
+    "cxrlt": {
+      "repository": "hieuphamha/cxrlt2026-task1-convnextv2",
+      "revision": "24bf8bdfd8d0262899167b030be16ab89f78ae20",
+      "weight_file": "convnextv2_base_mimic-cxr_padchest_csra_dbcas.safetensors",
+      "weight_sha256": "6950f7b97422b807e16a821a954e5d62b6868f8fbfb1e841f6d090c91e4ca17b",
+      "source_file": "model.py",
+      "source_sha256": "b08fb08dc44dd936573aaa590244b502756b5335085e9b78cd84d939d4975ec0",
+      "license": "MIT per upstream model card; underlying dataset terms also apply"
+    },
+    "chexficient": {
+      "repository": "StanfordAIMI/CheXficient",
+      "revision": "34bb5ea905c4cb504d2b73c9a6687a5d5082f52a",
+      "author_repository": "cwangrun/CheXficient",
+      "author_commit": "53a5dc61c4fd0b7d8217dd32169fb0aa2dd9156a",
+      "license": "MIT per HF model card and author LICENSE; vendored DINOv2 source headers specify Apache-2.0; underlying dataset terms also apply",
+      "manifest": "chexficient_source_manifest_20261108.json",
+      "manifest_sha256": "02b70afb2f49c696342a870f24dbe79df315969e5cc08e7916d3d18af403f43c",
+      "weight_sha256": "f691262c3f77c3c850bebff420180602cf4ca5d5214449e377366f3205548336"
+    },
+    "biovil_t": {
+      "repository": "microsoft/BiomedVLP-BioViL-T",
+      "revision": "301f526e823b805d3fe712d0cf06a66f042789c5",
+      "author_repository": "microsoft/hi-ml",
+      "author_commit": "b67c1d27c6b17d8e8ff01f8c507f3cabdb307388",
+      "license": "mit",
+      "manifest": "biovil_t_source_manifest_20261108.json",
+      "manifest_sha256": "b43b57e4c5a28fc64e473387a72aa75afca8de5cb07870d44ccdb4c87c553d92",
+      "weight_sha256": "b2399d73dc2a68b9f3a1950e864ae0ecd24093fb07aa459d7e65807ebdc0fb77"
+    }
+  },
+  "feature_recipe": {
+    "frozen_encoders": true,
+    "ordered_encoders": [
+      "cxrlt",
+      "chexficient",
+      "biovil_t"
+    ],
+    "encoder_widths": [
+      1054,
+      512,
+      384
+    ],
+    "candidate_width": 1950,
+    "pooling": "Per-encoder arithmetic image mean within each study, then concatenate in fixed order",
+    "preprocessing": "Separate fixed encoder preprocessing; see source manifests and BIOVIL_T_STUDY_PROBE_PLAN_20261108.md",
+    "biovil_t_features": "256 spatial features plus 128 L2-normalized projected features; no temporal Transformer in single-image path",
+    "patient_smoothing": false,
+    "tta": null
+  },
+  "local_head": {
+    "loss": "Ten-output unweighted BCE plus L2",
+    "l2": 0.01,
+    "optimizer": "CPU float64 LBFGS",
+    "max_iter": 200,
+    "final_iterations": 200,
+    "seed": 20261108,
+    "class_balance": false,
+    "standardization": "Fit on training patients only",
+    "head_sha256": "5b7bfd21ab68b8ac9ddee7c330cbaeb15e1e9feea5de0712aa52cd4170aed289",
+    "recipe_sha256": "5c00fa6f752c324a7ff4f68ccc9233d12341917c5c2d69a3a1dfb33114a195e7"
+  },
+  "train_cohort": {
+    "images": 30344,
+    "studies": 18513,
+    "patients": 11055
+  },
+  "official_valid_cohort": {
+    "images": 1422,
+    "studies": 859,
+    "patients": 228
+  },
+  "training_oof": {
+    "macro_auc": 0.8314702168488841,
+    "gain_vs_online_leader": 0.004431786442274044,
+    "positive_held_groups": 4,
+    "completed_chex_joint_reference": 0.8315443007087662,
+    "delta_vs_chex_joint_reference": -7.408385988205701e-05
+  },
+  "official_valid": {
+    "comparisons": {
+      "incumbent": {
+        "baseline": 0.8335505264258105,
+        "candidate": 0.84019431284289,
+        "delta": 0.0066437864170795224,
+        "ci95_percentile": [
+          0.00044439541050953217,
+          0.013506010651923727
+        ],
+        "defined_replicates": 1000,
+        "missing_replicates": 0
+      },
+      "legacy": {
+        "baseline": 0.8203251712650804,
+        "candidate": 0.84019431284289,
+        "delta": 0.019869141577809613,
+        "ci95_percentile": [
+          0.0052681150112432905,
+          0.033351758722662134
+        ],
+        "defined_replicates": 1000,
+        "missing_replicates": 0
+      }
+    },
+    "macro_f1_at_0_5": 0.3826145647952519,
+    "bootstrap": {
+      "replicates": 1000,
+      "seed": 20261108
+    },
+    "candidate_promoted_locally": true
+  },
+  "local_test_delivery": {
+    "filename": "submission_test_1414_best_auc_084019_20261108.csv",
+    "frozen_source_filename": "submission_test_1414_biovil_t_study_20261108.csv",
+    "images": 2218,
+    "studies": 1414,
+    "prediction_rows": 14140,
+    "classes_per_study": 10,
+    "gate": 0.5,
+    "csv_sha256": "2eeda38db046bfc78ae999d84fa7a43a858234d51dca4fd8c00606eb41c3ce67",
+    "independent_replay_max_probability_error": 0.0,
+    "online_score": null
+  },
+  "online_best_user_reported": {
+    "score": 78.98,
+    "filename": "submission_test_1414_best_auc_083355_20261108.csv",
+    "csv_sha256": "7590ef61172423348bcf9a0c9afdb578b5416396d41a1c9357b03b0df232ec68",
+    "source": "User feedback on 2026-11-08; scoring page not independently read; original bytes retained"
+  },
+  "independent_verification": {
+    "oof_status": "verified_oof_only",
+    "oof_report_sha256": "7addb31c21ce8e1f9bf5c0bc0b52487516b5189157f3505a90285e7d9f99313f",
+    "terminal_status": "verified_terminal_validation_decision",
+    "terminal_report_sha256": "a2ac2989614d71f3c8cc988d0951208dd988e215f31cf62dea32b5599eea921b",
+    "valid_prediction_max_abs_error": 0.0,
+    "oof_checker_sha256": "2832eaeb2dfd9c59ef8c565d2ade4cb2a5a4155a537cb2070dedac8b7e1e73eb",
+    "terminal_checker_sha256": "74167a3970c453f4f2a76c450089594b59bb8cdd4d490fcbfc6c7a60ec28cc5c"
+  },
+  "limitations": [
+    "Three-encoder OOF is slightly below the completed CheXficient joint reference; no claim of further OOF improvement.",
+    "Historical validation/OOF reuse is not corrected by the descriptive bootstrap intervals.",
+    "All four three-encoder CV heads and the final head reached the frozen 200-iteration budget; convergence is not claimed.",
+    "Public medical pretraining overlap with anonymized local data is unknown.",
+    "A local validation improvement does not establish a higher online score or competition materials compliance."
+  ]
+}
